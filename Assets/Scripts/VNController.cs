@@ -5,18 +5,38 @@ using UnityEngine.UI;
 
 public class VNController : MonoBehaviour {
 
-    private Text scrollingText;
+    private Text textComponent;
+
+    private bool scrolling;
+    private float scrollSpeed = 1;
+    private float lastPrint;
+
+    private string text;
+    private int scrollingCursor;
 
 	void Start () {
-        scrollingText = GameObject.FindGameObjectWithTag("ScrollingText").GetComponent<Text>();
+        textComponent = GameObject.FindGameObjectWithTag("ScrollingText").GetComponent<Text>();
         InitConversation();
 	}
 	
 	void Update () {
 
-        if (Input.GetButtonDown("Fire1"))
+        if (scrolling && Time.time - lastPrint >= 1)
         {
-            NextPage();
+            textComponent.text += text.ToCharArray()[scrollingCursor].ToString();
+            ++scrollingCursor;
+            if (scrollingCursor == text.Length)
+            {
+                scrolling = false;
+            }
+        }
+
+        if (!scrolling)
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                NextPage();
+            }
         }
     }
 
@@ -32,6 +52,10 @@ public class VNController : MonoBehaviour {
 
     void ChangeText(string message)
     {
-        scrollingText.text = message;
+        textComponent.text = "";
+        text = message;
+        scrolling = true;
+        scrollingCursor = 0;
+        lastPrint = Time.time;
     }
 }
