@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 93264930}
   m_Layer: 5
   m_Name: CharacterRight
-  m_TagString: Untagged
+  m_TagString: CharacterRight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 363747818}
   m_Layer: 5
   m_Name: CharacterLeft
-  m_TagString: Untagged
+  m_TagString: CharacterLeft
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -435,7 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.49461555, g: 0.5618177, b: 0.6132076, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
