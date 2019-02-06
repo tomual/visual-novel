@@ -22,6 +22,9 @@ public class VNController : MonoBehaviour {
     private GameObject characterRight;
     private GameObject characterLeft;
 
+    RawImage characterRightImage;
+    RawImage characterLeftImage;
+
     void Start ()
     {
         Texture2D tunaDefaultImage = Resources.Load<Texture2D>("VNImages/fishman");
@@ -30,18 +33,21 @@ public class VNController : MonoBehaviour {
 
         Debug.Log(tunaDefaultImage);
 
-        dialogue = new List<Line>();
-        dialogue.Add(new Line(Position.LEFT, "You", "Hello, I'm a merman. I am half fish and half man.", tunaDefaultImage));
-        dialogue.Add(new Line(Position.RIGHT, "You", "Hello, I'm a mermaid. I am half man and half fish.", dianaMehImage));
-        dialogue.Add(new Line(Position.LEFT, "You", "Jolly good.", tunaDefaultImage));
-        dialogue.Add(new Line(Position.RIGHT, "You", "What say you do a cup of tea at Margaret's Cafe?", dianaDefaultImage));
-        dialogue.Add(new Line(Position.LEFT, "You", "It sounds most enjoyable.", tunaDefaultImage));
-
         nameComponent = GameObject.FindGameObjectWithTag("NameText").GetComponent<Text>();
         textComponent = GameObject.FindGameObjectWithTag("ScrollingText").GetComponent<Text>();
 
         characterRight = GameObject.FindGameObjectWithTag("CharacterRight");
         characterLeft = GameObject.FindGameObjectWithTag("CharacterLeft");
+
+        characterRightImage = characterRight.GetComponent<RawImage>();
+        characterLeftImage = characterLeft.GetComponent<RawImage>();
+
+        dialogue = new List<Line>();
+        dialogue.Add(new Line(Position.LEFT, "You", "Hello, I'm a merman. I am half fish and half man.", tunaDefaultImage));
+        dialogue.Add(new Line(Position.RIGHT, "You", "Hello, I'm a mermaid. I am half man and half fish.", dianaMehImage));
+        dialogue.Add(new Line(Position.LEFT, "You", "Jolly good.", null));
+        dialogue.Add(new Line(Position.RIGHT, "You", "What say you do a cup of tea at Margaret's Cafe?", dianaDefaultImage));
+        dialogue.Add(new Line(Position.LEFT, "You", "It sounds most enjoyable.", tunaDefaultImage));
 
         InitConversation();
     }
@@ -69,11 +75,18 @@ public class VNController : MonoBehaviour {
 
     void InitConversation()
     {
+        characterLeftImage.texture = Resources.Load<Texture2D>("VNImages/fishman");
+        characterRightImage.texture = Resources.Load<Texture2D>("VNImages/titsfish");
         NextPage();
     }
 
     void NextPage()
     {
+        if (lineCursor >= dialogue.Count)
+        {
+            return;
+        }
+
         Line line = dialogue[lineCursor];
         Debug.Log(line.Position);
         ChangeText(line.Name, line.Message);
@@ -86,20 +99,36 @@ public class VNController : MonoBehaviour {
         RawImage characterLeftImage = characterLeft.GetComponent<RawImage>();
         if (line.Position == Position.LEFT)
         {
-            Debug.Log(characterRightImage.texture);
+            if (characterRightImage.texture)
+            {
+                characterRightImage.color = greyed;
+            }
 
-
-            characterRightImage.color = greyed;
-
-            characterLeftImage.color = opaque;
             characterLeftImage.texture = line.Image;
+            if (line.Image)
+            {
+                characterLeftImage.color = opaque;
+            } else
+            {
+                characterLeftImage.color = transparent;
+            }
         }
         else
         {
-            Debug.Log(characterLeft);
-            characterLeftImage.color = greyed;
-            characterRightImage.color = opaque;
+            if (characterLeftImage.texture)
+            {
+                characterLeftImage.color = greyed;
+            }
+
             characterRightImage.texture = line.Image;
+            if (line.Image)
+            {
+                characterRightImage.color = opaque;
+            }
+            else
+            {
+                characterRightImage.color = transparent;
+            }
         }
         lineCursor++;
     }
