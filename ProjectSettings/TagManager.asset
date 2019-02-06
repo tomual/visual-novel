@@ -8,6 +8,7 @@ TagManager:
   - CharacterRight
   - CharacterLeft
   - CharacterCenter
+  - NameText
   layers:
   - Default
   - TransparentFX
