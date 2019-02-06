@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class VNController : MonoBehaviour {
 
+    private Text nameComponent;
     private Text textComponent;
 
     private List<Line> dialogue;
@@ -23,19 +24,20 @@ public class VNController : MonoBehaviour {
 
     void Start ()
     {
-        Texture2D tunaDefaultImage = (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/Images/fishman.png", typeof(Texture2D));
-        Texture2D dianaDefaultImage = (Texture2D)AssetDatabase.LoadAssetAtPath("Assets/Images/titsfish.png", typeof(Texture2D));
-        Texture2D dianaMehImage = (Texture2D)AssetDatabase.LoadAssetAtPath("Assets/Images/titsfish_meh.png", typeof(Texture2D));
+        Texture2D tunaDefaultImage = Resources.Load<Texture2D>("VNImages/fishman");
+        Texture2D dianaDefaultImage = Resources.Load<Texture2D>("VNImages/titsfish");
+        Texture2D dianaMehImage = Resources.Load<Texture2D>("VNImages/titsfish_meh");
 
         Debug.Log(tunaDefaultImage);
 
         dialogue = new List<Line>();
-        dialogue.Add(new Line(Position.LEFT, "Hello, I'm a merman. I am half fish and half man.", tunaDefaultImage));
-        dialogue.Add(new Line(Position.RIGHT, "Hello, I'm a mermaid. I am half man and half fish.", dianaMehImage));
-        dialogue.Add(new Line(Position.LEFT, "Jolly good.", tunaDefaultImage));
-        dialogue.Add(new Line(Position.RIGHT, "What say you do a cup of tea at Margaret's Cafe?", dianaDefaultImage));
-        dialogue.Add(new Line(Position.LEFT, "It sounds most enjoyable.", tunaDefaultImage));
+        dialogue.Add(new Line(Position.LEFT, "You", "Hello, I'm a merman. I am half fish and half man.", tunaDefaultImage));
+        dialogue.Add(new Line(Position.RIGHT, "You", "Hello, I'm a mermaid. I am half man and half fish.", dianaMehImage));
+        dialogue.Add(new Line(Position.LEFT, "You", "Jolly good.", tunaDefaultImage));
+        dialogue.Add(new Line(Position.RIGHT, "You", "What say you do a cup of tea at Margaret's Cafe?", dianaDefaultImage));
+        dialogue.Add(new Line(Position.LEFT, "You", "It sounds most enjoyable.", tunaDefaultImage));
 
+        nameComponent = GameObject.FindGameObjectWithTag("NameText").GetComponent<Text>();
         textComponent = GameObject.FindGameObjectWithTag("ScrollingText").GetComponent<Text>();
 
         characterRight = GameObject.FindGameObjectWithTag("CharacterRight");
@@ -74,25 +76,37 @@ public class VNController : MonoBehaviour {
     {
         Line line = dialogue[lineCursor];
         Debug.Log(line.Position);
-        ChangeText(line.Message);
+        ChangeText(line.Name, line.Message);
+
+        Color32 greyed = new Color32(126, 143, 156, 255);
+        Color32 transparent = new Color32(255, 255, 255, 0);
+        Color32 opaque = new Color32(255, 255, 255, 255);
+
+        RawImage characterRightImage = characterRight.GetComponent<RawImage>();
+        RawImage characterLeftImage = characterLeft.GetComponent<RawImage>();
         if (line.Position == Position.LEFT)
         {
-            Debug.Log(characterRight.GetComponent<RawImage>().texture);
-            characterRight.GetComponent<RawImage>().color = new Color32(126, 143, 156, 255);
-            characterLeft.GetComponent<RawImage>().color = new Color32(255, 255, 255, 255);
-            characterLeft.GetComponent<RawImage>().texture = line.Image;
-        } else
+            Debug.Log(characterRightImage.texture);
+
+
+            characterRightImage.color = greyed;
+
+            characterLeftImage.color = opaque;
+            characterLeftImage.texture = line.Image;
+        }
+        else
         {
             Debug.Log(characterLeft);
-            characterLeft.GetComponent<RawImage>().color = new Color32(126, 143, 156, 255);
-            characterRight.GetComponent<RawImage>().color = new Color32(255, 255, 255, 255);
-            characterRight.GetComponent<RawImage>().texture = line.Image;
+            characterLeftImage.color = greyed;
+            characterRightImage.color = opaque;
+            characterRightImage.texture = line.Image;
         }
         lineCursor++;
     }
 
-    void ChangeText(string message)
+    void ChangeText(string name, string message)
     {
+        nameComponent.text = name;
         textComponent.text = "";
         text = message;
         scrolling = true;
@@ -105,12 +119,14 @@ public enum Position { LEFT, RIGHT };
 
 public class Line {
     public Position Position;
+    public string Name;
     public string Message;
     public Texture2D Image;
 
-    public Line(Position position, string message, Texture2D image)
+    public Line(Position position, string name, string message, Texture2D image)
     {
         Position = position;
+        Name = name;
         Message = message;
         Image = image;
     }
